@@ -12,11 +12,12 @@ def main(page: ft.Page):
     words_used = []
     random_word = random.choice(words)
     correct_words = 0
+    incorrect_words = 0
     
     def change_word():
         nonlocal random_word
         words_used.append(random_word)
-        words_guessed.value = f"{len(words_used)}/{len(words)}"
+        words_guessed.value = f"Done: {len(words_used)}/{len(words)}"
         if len(words) == len(words_used):
             result.color = "white"
             result.value = f"You've completed the test!\nYou had {round((correct_words/len(words)) * 100, 2)}% accuracy!"
@@ -32,6 +33,7 @@ def main(page: ft.Page):
     def check_word(e):
         nonlocal random_word
         nonlocal correct_words
+        nonlocal incorrect_words
         if writing_word.value.lower() == random_word.lower():
             result.value = "Correct!"
             result.color = "green"
@@ -39,16 +41,20 @@ def main(page: ft.Page):
         else:
             result.value = "Incorrect!"
             result.color = "red"
+            incorrect_words += 1
+            incorrect_count.value = f"Incorrect: {incorrect_words}"
         writing_word.value = ""
+        page.update()
         change_word()
 
     word_display = ft.Text(random_word, size = 20, weight = "bold")
     writing_word = ft.TextField(label="Type here", on_submit=check_word)
-    words_guessed = ft.Text(f"0/{len(words)}")
+    words_guessed = ft.Text(f"Done: 0/{len(words)}")
+    incorrect_count = ft.Text(f"Incorrect: {incorrect_words}")
     result = ft.Text()
 
     page.add(ft.Row([word_display], alignment = ft.MainAxisAlignment.CENTER), 
-             ft.Row([words_guessed], alignment = ft.MainAxisAlignment.CENTER), 
+             ft.Row([words_guessed, incorrect_count], alignment = ft.MainAxisAlignment.CENTER), 
              ft.Row([writing_word], alignment = ft.MainAxisAlignment.CENTER), 
              ft.Row([result], alignment = ft.MainAxisAlignment.CENTER))
 
