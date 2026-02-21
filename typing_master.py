@@ -3,6 +3,8 @@ import random
 
 def main(page: ft.Page):
     page.title = "Typing Test 🕗"
+    page.window.height = 450
+    page.window.width = 400
     
     words = ["private", "drawing", "dismissal", "civilization", "advice", "clarify", "perfume", "embark",
              "culture", "resist", "secular", "undertake", "fashionable", "sandwich", "suitcase", "electroencefalografista"]
@@ -16,6 +18,7 @@ def main(page: ft.Page):
         words_used.append(random_word)
         words_guessed.value = f"{len(words_used)}/{len(words)}"
         if len(words) == len(words_used):
+            result.color = "white"
             result.value = f"You've completed the test!\nYou had {round((correct_words/len(words)) * 100, 2)}% accuracy!"
             writing_word.disabled = True
             page.update()
@@ -29,7 +32,7 @@ def main(page: ft.Page):
     def check_word(e):
         nonlocal random_word
         nonlocal correct_words
-        if writing_word.value == random_word:
+        if writing_word.value.lower() == random_word.lower():
             result.value = "Correct!"
             result.color = "green"
             correct_words += 1
@@ -39,11 +42,14 @@ def main(page: ft.Page):
         writing_word.value = ""
         change_word()
 
-    word_display = ft.Text(random_word)
+    word_display = ft.Text(random_word, size = 20, weight = "bold")
     writing_word = ft.TextField(label="Type here", on_submit=check_word)
     words_guessed = ft.Text(f"0/{len(words)}")
     result = ft.Text()
 
-    page.add(word_display, words_guessed, ft.Row([writing_word]), ft.Row([result]))
+    page.add(ft.Row([word_display], alignment = ft.MainAxisAlignment.CENTER), 
+             ft.Row([words_guessed], alignment = ft.MainAxisAlignment.CENTER), 
+             ft.Row([writing_word], alignment = ft.MainAxisAlignment.CENTER), 
+             ft.Row([result], alignment = ft.MainAxisAlignment.CENTER))
 
 ft.app(main)
